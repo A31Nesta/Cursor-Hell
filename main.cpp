@@ -1,14 +1,18 @@
-// OpenGL
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+// Cursor Hell
+#include "CHEngine.hpp"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+int main()
+{
+	if (!InitEngine())
+	{
+		std::cout << "What kind of potato are you using??" << std::endl;
+		return -1;
+	}
 
-// std
-#include <iostream>
+	while (!glfwWindowShouldClose(window))
+	{
 
-int main() {
-	std::cout << "The libraries work I think" << std::endl;
+
+		EndUpdate();
+	}
 }
