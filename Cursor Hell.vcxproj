@@ -149,11 +149,13 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Quad.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="stb_image_something.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CHEngine.hpp" />
     <ClInclude Include="Quad.hpp" />
+    <ClInclude Include="Scene.hpp" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

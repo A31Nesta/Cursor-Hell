@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <numeric>
 
+// Cursor Hell
+#include "Scene.hpp"
 
 GLFWwindow* window;
 
@@ -176,4 +178,15 @@ void ProcessInput()
 {
 	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+}
+
+
+
+void DrawQuad(Quad& q, std::vector<Transform> t)
+{
+	q.Draw(shader, t);
+}
+void DrawScene(Scene& s)
+{
+	s.Draw(shader);
 }
