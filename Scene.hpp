@@ -13,6 +13,8 @@ public:
 	void Draw(unsigned int& shader);
 
 protected:
+	void InitScene();
+
 	Quad booletSprite;
 	
 	unsigned int numberOfMaxBoolets = 1000;

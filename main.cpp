@@ -1,5 +1,6 @@
 // Cursor Hell
 #include "CHEngine.hpp"
+#include "SpiralScene.hpp"
 
 int main()
 {
@@ -11,17 +12,18 @@ int main()
 	std::cout << "Engine initialized!" << std::endl;
 
 
-	Scene scene;
+	SpiralScene scene;
 
 	while (!glfwWindowShouldClose(window))
 	{
+		CalcFPS();
 		ProcessInput();
 
 		// rendering
-		glClearColor(0.0f, 0.12f, 0.3f, 0.2f);
+		glClearColor(0.0f, 0.05f, 0.15f, 0.2f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		DrawScene(scene);
+		scene.Draw(shader, deltaTime);
 
 		EndUpdate();
 	}
