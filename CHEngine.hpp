@@ -62,6 +62,7 @@ bool InitEngine()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
 	/**/
@@ -73,15 +74,17 @@ bool InitEngine()
 	/**
 	REN_HEIGHT = SCR_HEIGHT / 1.5f;
 	REN_WIDTH  = SCR_WIDTH  / 1.5f;
-	/**/
+	/**
 	REN_HEIGHT = SCR_HEIGHT;
 	REN_WIDTH  = SCR_WIDTH;
-	/**/
-
-	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Cursor Hell", glfwGetPrimaryMonitor(), NULL);
 	/**
+
+	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Cursor Hell", NULL, NULL);
+	/**/
 	SCR_WIDTH  = 1280;
 	SCR_HEIGHT = 720;
+	REN_HEIGHT = SCR_HEIGHT;
+	REN_WIDTH = SCR_WIDTH;
 	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Cursor Hell", NULL, NULL);
 	/**/
 
@@ -121,6 +124,11 @@ bool InitEngine()
 
 	glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, GL_FALSE, &view[0][0]);
+
+
+	glEnable(GL_BLEND);
+	glBlendEquation(GL_FUNC_ADD); // this is default
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	lastTime = glfwGetTime();
 
@@ -204,6 +212,10 @@ void EndUpdate()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
+	// rendering
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+
 	glUseProgram(screenShader);
 	glBindVertexArray(quadVAO);
 	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
@@ -215,6 +227,10 @@ void EndUpdate()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glViewport(0, 0, REN_WIDTH, REN_HEIGHT);
+
+	// rendering
+	glClearColor(0.0f, 0.05f, 0.15f, 0.2f);
+	glClear(GL_COLOR_BUFFER_BIT);
 	
 	glUseProgram(shader);
 }
@@ -249,8 +265,8 @@ void CreateShader()
 		"void main()\n"
 		"{\n"
 		"   vec4 color = texture(texture1, TexCoord);\n"
-		"	if (color.a < 0.5)\n"
-		"		discard;\n"
+		"	//if (color.a < 0.5)\n"
+		"	//	discard;\n"
 		""
 		"   FragColor = color;\n"
 		"}\n\0"

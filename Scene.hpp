@@ -10,10 +10,10 @@ class Scene
 public:
 	Scene();
 
-	void Draw(unsigned int& shader);
+	virtual void Draw(unsigned int& shader);
 
 protected:
-	void InitScene();
+	virtual void InitScene();
 
 	Quad booletSprite;
 	
