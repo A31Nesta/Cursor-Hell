@@ -49,7 +49,7 @@ float sensitivity = 0.1f;
 bool firstMouse = true;
 float lastX = SCR_WIDTH/2;
 float lastY = SCR_HEIGHT/2;
-float xoffset, yoffset;
+float xcur, ycur;
 
 glm::mat4 projview = glm::mat4(1.0f);
 
@@ -78,13 +78,16 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
         firstMouse = false;
     }
 
-	xoffset = xposf - lastX;
-	yoffset = lastY - yposf; // reversed since y-coordinates range from bottom to top
+	float xoffset = xposf - lastX;
+	float yoffset = lastY - yposf; // reversed since y-coordinates range from bottom to top
 	lastX = xposf;
 	lastY = yposf;
 
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
+
+	xcur = xoffset;
+	ycur = yoffset;
 }
 
 bool InitEngine(int mode = 0)
@@ -269,9 +272,11 @@ void EndUpdate()
 	glUseProgram(uiShader);
 	DrawInterface();
 
+	xcur = 0;
+	ycur = 0;
+
 	glfwSwapBuffers(window);
 	glfwPollEvents();
-
 
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glViewport(0, 0, REN_WIDTH, REN_HEIGHT);
@@ -528,5 +533,5 @@ void DrawQuad(Quad& q, std::vector<Transform> t)
 */
 void DrawScene(Scene& s)
 {
-	s.Draw(shader);
+	s.Draw(shader, window, deltaTime);
 }

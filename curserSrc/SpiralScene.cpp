@@ -8,31 +8,18 @@ void SpiralScene::InitScene()
 
 		bullets.push_back(t);
 	}
+
+	GenTrap();
 }
 
-void SpiralScene::Update(GLFWwindow* window, double dt)
+void SpiralScene::Update(double dt)
 {
-	if (S_X == -1) {
-		glfwGetWindowSize(window, &S_X, &S_Y);
-	}
+	//if (lost) { return; }
 
 	if (numberOfBullets < numberOfMaxBoolets) {
 		numberOfBullets++;
 		//std::cout << "NoB: " << std::to_string(numberOfBullets) << std::endl;
 	}
-
-
-	plPos.x += *xpos/10;
-	plPos.y += *ypos/7;
-
-	glm::vec4 trpos = projview * glm::vec4(plPos.x, plPos.y, 1.0f, 0.0f);
-
-	if (trpos.x > 1) plPos.x = 1;
-	if (trpos.y > 1) plPos.y = 1;
-	if (trpos.x < -1) plPos.x = -1;
-	if (trpos.y < -1) plPos.y = -1;
-
-	if (lost) { return; }
 
 	for (int i = 0; i < numberOfBullets; i++)
 	{
@@ -57,16 +44,17 @@ void SpiralScene::Update(GLFWwindow* window, double dt)
 			bullets[i].Translate(glm::vec2(x, y));
 		}
 
-		/**/
-		if (bullets[i].HasCollided(plPos, 0.05)) { lost = true; }
-		/**/
+		//if (bullets[i].HasCollided(plPos, 0.04)) { lost = true; }
 	}
 }
 
 void SpiralScene::Draw(unsigned int& shader, GLFWwindow* window, double dt)
 {
-	Update(window, dt);
+	UpdatePlayer(window);
+	Update(dt);
 
 	booletSprite.Draw(shader, bullets, numberOfBullets);
+	std::vector<Bullet> bv = traps.at(0).GetBulletArr();
+	booletSprite.Draw(shader, bv);
 	player.Draw(shader, plPos, plSize);
 }

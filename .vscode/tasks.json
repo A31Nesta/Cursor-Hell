@@ -8,19 +8,23 @@
 			"args": [
 				"-fdiagnostics-color=always",
 				"-g",
-				"-I", "${workspaceFolder}/GLAD/include",
-				"-I", "${workspaceFolder}/GLFW/include",
-				"-I", "${workspaceFolder}/GLM/include",
+
 				"${workspaceFolder}/glad.c",
 				"${workspaceFolder}/curserSrc/*.cpp",
 				"${workspaceFolder}/main.cpp",
-				"-lglfw3",
-				"-lGL",
-				"-lX11",
-				"-lpthread",
-				"-lXrandr",
-				"-lXi",
-				"-ldl",
+
+				"-I", "${workspaceFolder}/GLAD/include",
+				"-I", "${workspaceFolder}/GLFW/includeOrig",
+				"-I", "${workspaceFolder}/GLM/include",
+
+				"-l", "glfw3",
+                "-l", "GL",
+                "-l", "X11",
+                "-l", "pthread",
+                "-l", "Xrandr",
+                "-l", "Xi",
+                "-l", "dl",
+
 				"-o",
 				"${workspaceFolder}/build/CursErEngine"
 			],

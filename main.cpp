@@ -12,14 +12,14 @@ int main()
 	}
 	std::cout << "Engine initialized!" << std::endl;
 
-	sensitivity = 0.5f;
-	SpiralScene scene(&xoffset, &yoffset, projview);
+	sensitivity = 0.1f;
+	SpiralScene scene(&xcur, &ycur, projview);
 
 	while (!glfwWindowShouldClose(window))
 	{
 		CalcFPS();
 		ProcessInput();
-
+		
 		scene.Draw(shader, window, deltaTime);
 
 		EndUpdate();

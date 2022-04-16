@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Quad.hpp"
+#include "Types/Polygon.hpp"
 
 // std
 #include <cmath>
@@ -8,12 +9,15 @@
 class Scene
 {
 public:
-	Scene();
+	Scene(float* x, float* y, glm::mat4 projv);
 
-	virtual void Draw(unsigned int& shader);
+	virtual void Draw(unsigned int& shader, GLFWwindow* window, double dt);
 
 protected:
 	virtual void InitScene();
+
+	void GenTrap(); // Execute after texture is set
+	void UpdatePlayer(GLFWwindow* window);
 
 	void LoadTexture(std::string path)
 	{
@@ -51,9 +55,30 @@ protected:
 
 	unsigned int texture;
 	Quad booletSprite;
+
+	int S_X = -1, S_Y = -1;
+	float* xpos;
+	float* ypos;
+
+	glm::mat4 projview;
+	glm::vec4 smallLimit; // -1, -1 coordinate
+	glm::vec4 bigLimit;   //  1,  1 coordinate
+
+	bool lost = false;
+
+	glm::vec2 plPos = glm::vec2(0.0f);
+	glm::vec2 plSize = glm::vec2(0.075f);
+	Quad player;
+
+	glm::vec2 origin = glm::vec2(-1, 1);
+	int numberOfBullets = 0;
 	
 	unsigned int numberOfMaxBoolets = 1000;
 	std::vector<Bullet> bullets;
+
+	uint32_t maxTraps = 5;
+	std::vector<Polygon> traps;
+	std::vector<bool> trapsAvailable;
 
 	//std::vector<std::string> behaviours;
 };
