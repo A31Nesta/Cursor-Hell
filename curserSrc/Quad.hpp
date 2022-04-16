@@ -1,20 +1,8 @@
 #pragma once
 
-// OpenGL
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "Types/Bullet.hpp"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include "stb_image.h"
-
-// std
-#include <iostream>
-#include <string>
-#include <vector>
-
+/** /
 struct Transform
 {
 	glm::vec2 position = glm::vec2(0.0f);
@@ -41,16 +29,19 @@ struct Transform
 		transform = glm::scale(transform, glm::vec3(scale.x, scale.y, 1.0f));
 	}
 };
+/**/
 
 class Quad
 {
 public:
-	Quad(std::string file = "Assets/Sprites/checker.png");
+	Quad();
 
 	void LoadTexture(std::string path);
 
 	void ValidateQuad(unsigned int& shader);
-	void Draw(unsigned int& shader, std::vector<Transform>& t, int numberOfBullets = -1);
+	void Draw(unsigned int& shader, std::vector<Bullet>& t, int numberOfBullets = -1);
+	void Draw(unsigned int& shader, glm::vec2 pos, glm::vec2 scale);
+	void Draw();
 
 private:
 	void GenerateObjects();

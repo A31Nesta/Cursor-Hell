@@ -1,25 +1,26 @@
 // Cursor Hell
-#include "CHEngine.hpp"
-#include "SpiralScene.hpp"
+#include "curserSrc/CHEngine.hpp"
+#include "curserSrc/SpiralScene.hpp"
+#include "curserSrc/Types/Bullet.hpp"
 
 int main()
 {
-	if (!InitEngine())
+	if (!InitEngine(1))
 	{
 		std::cout << "What kind of potato are you using??" << std::endl;
 		return -1;
 	}
 	std::cout << "Engine initialized!" << std::endl;
 
-
-	SpiralScene scene;
+	sensitivity = 0.5f;
+	SpiralScene scene(&xoffset, &yoffset, projview);
 
 	while (!glfwWindowShouldClose(window))
 	{
 		CalcFPS();
 		ProcessInput();
 
-		scene.Draw(shader, deltaTime);
+		scene.Draw(shader, window, deltaTime);
 
 		EndUpdate();
 	}

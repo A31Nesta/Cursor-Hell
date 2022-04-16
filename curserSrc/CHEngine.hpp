@@ -31,6 +31,7 @@ float aspectx, aspecty;
 
 unsigned int shader;
 unsigned int screenShader;
+unsigned int uiShader;
 
 double lastTime = 0;
 
@@ -42,9 +43,21 @@ float invDT = 0.0;
 
 glm::mat4 projection = glm::mat4(1.0f);
 
+Quad* sidebar;
+
+float sensitivity = 0.1f;
+bool firstMouse = true;
+float lastX = SCR_WIDTH/2;
+float lastY = SCR_HEIGHT/2;
+float xoffset, yoffset;
+
+glm::mat4 projview = glm::mat4(1.0f);
+
+
 void ProcessInput();
 void CreateShader();
 void CreateScreenShader();
+void CreateUIShader();
 
 void CreateFramebufferObjects();
 void CreateFBO();
@@ -53,8 +66,28 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	float xposf = static_cast<float>(xpos);
+    float yposf = static_cast<float>(ypos);
 
-bool InitEngine()
+	if (firstMouse)
+    {
+        lastX = xposf;
+        lastY = yposf;
+        firstMouse = false;
+    }
+
+	xoffset = xposf - lastX;
+	yoffset = lastY - yposf; // reversed since y-coordinates range from bottom to top
+	lastX = xposf;
+	lastY = yposf;
+
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+}
+
+bool InitEngine(int mode = 0)
 {
 	glfwInit();
 
@@ -62,31 +95,29 @@ bool InitEngine()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
 	/**/
-	const GLFWvidmode* vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	
-	SCR_HEIGHT = (vidmode->height);
-	SCR_WIDTH  = (vidmode->width);
+	if (mode == 1) {
+		// glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+		const GLFWvidmode* vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		SCR_HEIGHT = (vidmode->height);
+		SCR_WIDTH  = (vidmode->width);
+	}
+	else if (mode == 0) {
+		SCR_WIDTH  = 1280;
+		SCR_HEIGHT = 720;
+	}
 
 	/**
 	REN_HEIGHT = SCR_HEIGHT / 1.5f;
 	REN_WIDTH  = SCR_WIDTH  / 1.5f;
-	/**
+	/**/
 	REN_HEIGHT = SCR_HEIGHT;
 	REN_WIDTH  = SCR_WIDTH;
-	/**
+	/**/
 
-	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Cursor Hell", NULL, NULL);
-	/**/
-	SCR_WIDTH  = 1280;
-	SCR_HEIGHT = 720;
-	REN_HEIGHT = SCR_HEIGHT;
-	REN_WIDTH = SCR_WIDTH;
-	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Cursor Hell", NULL, NULL);
-	/**/
+	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Cursor Hell - CursEr Engine", mode == 1 ? glfwGetPrimaryMonitor() : NULL, NULL);
 
 	if (window == NULL)
 	{
@@ -96,6 +127,7 @@ bool InitEngine()
 	}
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
@@ -106,6 +138,7 @@ bool InitEngine()
 
 	CreateShader();
 	CreateScreenShader();
+	CreateUIShader();
 
 	CreateFramebufferObjects();
 	CreateFBO();
@@ -124,6 +157,12 @@ bool InitEngine()
 
 	glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, GL_FALSE, &view[0][0]);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	projview = projection * view;
+
+	sidebar = new Quad();
+	sidebar->LoadTexture("./Assets/Background2.png");
 
 
 	glEnable(GL_BLEND);
@@ -207,6 +246,12 @@ void CalcFPS()
 		timer = 0;
 	}
 }
+
+void DrawInterface()
+{
+	sidebar->Draw();
+}
+
 void EndUpdate()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -221,6 +266,9 @@ void EndUpdate()
 	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
+	glUseProgram(uiShader);
+	DrawInterface();
+
 	glfwSwapBuffers(window);
 	glfwPollEvents();
 
@@ -229,7 +277,7 @@ void EndUpdate()
 	glViewport(0, 0, REN_WIDTH, REN_HEIGHT);
 
 	// rendering
-	glClearColor(0.0f, 0.05f, 0.15f, 0.2f);
+	glClearColor(0.0f, 0.05f, 0.15f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	glUseProgram(shader);
@@ -268,6 +316,7 @@ void CreateShader()
 		"	//if (color.a < 0.5)\n"
 		"	//	discard;\n"
 		""
+		"   //FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
 		"   FragColor = color;\n"
 		"}\n\0"
 		;
@@ -312,6 +361,7 @@ void CreateShader()
 
 
 	glUseProgram(shader);
+	glUniform1i(glGetUniformLocation(shader, "texture1"), 0);
 }
 void CreateScreenShader()
 {
@@ -338,8 +388,9 @@ void CreateScreenShader()
 
 		"void main()\n"
 		"{\n"
-			"vec3 col = texture(screenTexture, TexCoords).rgb;\n"
-			"FragColor = vec4(col, 1.0);\n"
+			"vec4 col = texture(screenTexture, TexCoords);\n"
+			"FragColor = col;\n"
+			"//FragColor = vec4(TexCoords.x, TexCoords.y, 0.0, 1.0);\n"
 		"}\0"
 		;
 
@@ -382,7 +433,81 @@ void CreateScreenShader()
 	glDeleteShader(fragmentShader);
 
 	glUseProgram(screenShader);
-	glUniform1i(glGetUniformLocation(shader, "screenTexture"), 0);
+	glUniform1i(glGetUniformLocation(screenShader, "screenTexture"), 0);
+
+	glUseProgram(shader);
+}
+void CreateUIShader()
+{
+	const char* vertexShaderSource =
+		"#version 330 core\n"
+		"layout(location = 0) in vec2 aPos;\n"
+
+		"out vec2 TexCoords;\n"
+
+		"void main()\n"
+		"{\n"
+			"TexCoords = vec2((aPos.x+1)/2, (aPos.y+1)/2);\n"
+			"gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);\n"
+		"}"
+		;
+	const char* fragmentShaderSource =
+		"#version 330 core\n"
+		"out vec4 FragColor;\n"
+
+		"in vec2 TexCoords;\n"
+
+		"uniform sampler2D uitex;\n"
+
+		"void main()\n"
+		"{\n"
+			"vec4 col = texture(uitex, TexCoords);\n"
+			"if (col.a < 0.5) { discard; }\n"
+			"FragColor = vec4(col.rgb, 1.0);\n"
+			"//FragColor = vec4(TexCoords.x, TexCoords.y, 0.0, 1.0);\n"
+		"}\0"
+		;
+
+	// vertex shader
+	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+	// check for shader compile errors
+	int success;
+	char infoLog[512];
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+	// fragment shader
+	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+	// check for shader compile errors
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+	// link shaders
+	uiShader = glCreateProgram();
+	glAttachShader(uiShader, vertexShader);
+	glAttachShader(uiShader, fragmentShader);
+	glLinkProgram(uiShader);
+	// check for linking errors
+	glGetProgramiv(uiShader, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(uiShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+	}
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	glUseProgram(uiShader);
+	glUniform1i(glGetUniformLocation(uiShader, "uitex"), 0);
 
 	glUseProgram(shader);
 }
@@ -395,10 +520,12 @@ void ProcessInput()
 
 
 
+/*
 void DrawQuad(Quad& q, std::vector<Transform> t)
 {
 	q.Draw(shader, t);
 }
+*/
 void DrawScene(Scene& s)
 {
 	s.Draw(shader);

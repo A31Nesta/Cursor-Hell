@@ -1,19 +1,16 @@
 #include "Quad.hpp"
 
 
-Quad::Quad(std::string file)
+Quad::Quad()
 {
     GenerateObjects();
 
-    LoadTexture(file);
+    LoadTexture("Assets/Sprites/checker.png");
 }
 
-void Quad::Draw(unsigned int& shader, std::vector<Transform>& t, int numberOfBullets)
+void Quad::Draw(unsigned int& shader, std::vector<Bullet>& t, int numberOfBullets)
 {
     glBindVertexArray(VAO);
-        
-    glUniform1i(glGetUniformLocation(shader, "texture1"), 0);
-    glBindTexture(GL_TEXTURE_2D, texture);
 
     int NoB = numberOfBullets;
 
@@ -25,18 +22,35 @@ void Quad::Draw(unsigned int& shader, std::vector<Transform>& t, int numberOfBul
 
     for (int i = 0; i < NoB; i++) // 10, 5
     {
-        glm::mat4 m4 = t[i].transform;
-        //glm::vec3 pos = glm::vec3(m4[3]);
+        glm::mat4 m4 = t[i].GetMat();
 
-        //if ((pos.x < 10 && pos.x > -10) && (pos.y < 5 && pos.y > -5)) {
-            m4 *= t[i].rotMatrix;
-            //m4 = glm::rotate(m4, glm::radians(t[i].rotation), glm::vec3(0, 0, 1.0f));
-            m4 = glm::scale(m4, glm::vec3(t[i].scale, 1.0f));
+        if (t[i].HasTexture()) glBindTexture(GL_TEXTURE_2D, t[i].GetTexture());
+        else glBindTexture(GL_TEXTURE_2D, texture);
 
-            glUniformMatrix4fv(glGetUniformLocation(shader, "transform"), 1, GL_FALSE, glm::value_ptr(m4));
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        //}
+        glUniformMatrix4fv(glGetUniformLocation(shader, "transform"), 1, GL_FALSE, glm::value_ptr(m4));
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
+}
+
+void Quad::Draw(unsigned int& shader, glm::vec2 pos, glm::vec2 scale)
+{
+    glBindVertexArray(VAO);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glm::mat4 m4(1.0f);
+    m4 = glm::translate(m4, glm::vec3(pos.x, pos.y, 1.0f));
+    m4 = glm::scale(m4, glm::vec3(scale.x, scale.y, 1.0f));
+
+    glUniformMatrix4fv(glGetUniformLocation(shader, "transform"), 1, GL_FALSE, glm::value_ptr(m4));
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+void Quad::Draw()
+{
+    glBindVertexArray(VAO);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void Quad::ValidateQuad(unsigned int& shader)
