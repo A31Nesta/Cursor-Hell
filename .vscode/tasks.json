@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"type": "cppbuild",
-			"label": "C/C++: g++ build active file",
+			"label": "C/C++: Build Normal Game",
 			"command": "/usr/bin/g++",
 			"args": [
 				"-fdiagnostics-color=always",
@@ -11,6 +11,85 @@
 
 				"${workspaceFolder}/glad.c",
 				"${workspaceFolder}/curserSrc/*.cpp",
+				"${workspaceFolder}/curserSrc/**/*.cpp",
+				"${workspaceFolder}/main.cpp",
+
+				"-I", "${workspaceFolder}/GLAD/include",
+				"-I", "${workspaceFolder}/GLFW/includeOrig",
+				"-I", "${workspaceFolder}/GLM/include",
+				"-I", "${workspaceFolder}/SFML/include",
+
+				"-l", "glfw3",
+                "-l", "GL",
+                "-l", "X11",
+                "-l", "pthread",
+                "-l", "Xrandr",
+                "-l", "Xi",
+                "-l", "dl",
+				"-l", "sfml-audio",
+
+				"-o",
+				"${workspaceFolder}/build/CursErEngine"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: /usr/bin/g++"
+		},
+		{
+			"type": "cppbuild",
+			"label": "C/C++: Build NOGRAB Version",
+			"command": "/usr/bin/g++",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+
+				"-DNOGRAB",
+
+				"${workspaceFolder}/glad.c",
+				"${workspaceFolder}/curserSrc/**/*.cpp",
+				"${workspaceFolder}/main.cpp",
+
+				"-I", "${workspaceFolder}/GLAD/include",
+				"-I", "${workspaceFolder}/GLFW/includeOrig",
+				"-I", "${workspaceFolder}/GLM/include",
+
+				"-l", "glfw3",
+                "-l", "GL",
+                "-l", "X11",
+                "-l", "pthread",
+                "-l", "Xrandr",
+                "-l", "Xi",
+                "-l", "dl",
+
+				"-o",
+				"${workspaceFolder}/build/CursErEngine"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: /usr/bin/g++"
+		},
+		{
+			"type": "cppbuild",
+			"label": "C/C++: Build Forced 1080p Version",
+			"command": "/usr/bin/g++",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+
+				"-DFORCERES",
+
+				"${workspaceFolder}/glad.c",
+				"${workspaceFolder}/curserSrc/**/*.cpp",
 				"${workspaceFolder}/main.cpp",
 
 				"-I", "${workspaceFolder}/GLAD/include",

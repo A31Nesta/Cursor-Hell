@@ -21,6 +21,9 @@ int main()
 		ProcessInput();
 		
 		scene.Draw(shader, window, deltaTime);
+		DrawInterface();
+		glBindTexture(GL_TEXTURE_2D, font);
+		scene.DrawText(textShader);
 
 		EndUpdate();
 	}

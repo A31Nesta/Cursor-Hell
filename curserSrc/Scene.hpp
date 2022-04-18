@@ -2,6 +2,7 @@
 
 #include "Quad.hpp"
 #include "Types/Polygon.hpp"
+#include "GUI/CurserText.hpp"
 
 // std
 #include <cmath>
@@ -12,12 +13,15 @@ public:
 	Scene(float* x, float* y, glm::mat4 projv);
 
 	virtual void Draw(unsigned int& shader, GLFWwindow* window, double dt);
+	void DrawText(unsigned int& textShader);
 
 protected:
 	virtual void InitScene();
 
-	void GenTrap(); // Execute after texture is set
+	void GenTrap();
 	void UpdatePlayer(GLFWwindow* window);
+
+	void LoseLife();
 
 	void LoadTexture(std::string path)
 	{
@@ -53,6 +57,11 @@ protected:
 		stbi_image_free(data);
 	}
 
+	float patternTimer = 0.0f;
+	
+	float totalTime = 15.0f; // After this time (seconds), no more bullets will be generated
+	float timeAfterFinished = 10.0f; // Time to clean all bullets from the screen
+
 	unsigned int texture;
 	Quad booletSprite;
 
@@ -64,7 +73,14 @@ protected:
 	glm::vec4 smallLimit; // -1, -1 coordinate
 	glm::vec4 bigLimit;   //  1,  1 coordinate
 
+
+	int lives = 3;
+	bool gameOver = false;
+
 	bool lost = false;
+	glm::vec2 lostPoint = glm::vec2(0.0f);
+	glm::vec2 lostSize;
+	Quad deathQuad;
 
 	glm::vec2 plPos = glm::vec2(0.0f);
 	glm::vec2 plSize = glm::vec2(0.075f);
@@ -79,7 +95,9 @@ protected:
 	uint32_t maxTraps = 5;
 	std::vector<Polygon> traps;
 	std::vector<bool> trapsAvailable;
+	float trapSpawnTimer = 0.0f;
 
-	//std::vector<std::string> behaviours;
+
+	Text livesIndicator;
 };
 

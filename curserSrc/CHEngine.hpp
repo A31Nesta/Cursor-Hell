@@ -14,6 +14,9 @@
 #include <algorithm>
 #include <numeric>
 
+#include "Sound/CurserSound.hpp"
+
+
 // Cursor Hell
 #include "Scene.hpp"
 
@@ -32,6 +35,9 @@ float aspectx, aspecty;
 unsigned int shader;
 unsigned int screenShader;
 unsigned int uiShader;
+unsigned int textShader;
+
+unsigned int font;
 
 double lastTime = 0;
 
@@ -58,6 +64,9 @@ void ProcessInput();
 void CreateShader();
 void CreateScreenShader();
 void CreateUIShader();
+void CreateTextShader();
+unsigned int LoadTexture(std::string str);
+void LoadSounds();
 
 void CreateFramebufferObjects();
 void CreateFBO();
@@ -98,20 +107,22 @@ bool InitEngine(int mode = 0)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
+	//glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
 	/**/
-	if (mode == 1) {
-		// glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-		const GLFWvidmode* vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		SCR_HEIGHT = (vidmode->height);
-		SCR_WIDTH  = (vidmode->width);
-	}
-	else if (mode == 0) {
-		SCR_WIDTH  = 1280;
-		SCR_HEIGHT = 720;
+	const GLFWvidmode* vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	SCR_HEIGHT = (vidmode->height);
+	SCR_WIDTH  = (vidmode->width);
+
+	if (mode == 0) {
+		SCR_WIDTH  = SCR_WIDTH  / 1.5f;
+		SCR_HEIGHT = SCR_HEIGHT / 1.5f;
 	}
 
+#if FORCERES
+	REN_WIDTH  = 1920;
+	REN_HEIGHT = 1080;
+#else
 	/**
 	REN_HEIGHT = SCR_HEIGHT / 1.5f;
 	REN_WIDTH  = SCR_WIDTH  / 1.5f;
@@ -119,6 +130,7 @@ bool InitEngine(int mode = 0)
 	REN_HEIGHT = SCR_HEIGHT;
 	REN_WIDTH  = SCR_WIDTH;
 	/**/
+#endif
 
 	window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Cursor Hell - CursEr Engine", mode == 1 ? glfwGetPrimaryMonitor() : NULL, NULL);
 
@@ -142,6 +154,9 @@ bool InitEngine(int mode = 0)
 	CreateShader();
 	CreateScreenShader();
 	CreateUIShader();
+	CreateTextShader();
+
+	LoadSounds();
 
 	CreateFramebufferObjects();
 	CreateFBO();
@@ -153,6 +168,14 @@ bool InitEngine(int mode = 0)
 	aspectx = SCR_WIDTH  / gcd;
 	aspecty = SCR_HEIGHT / gcd;
 
+	std::cout << "Aspect Ratio: " << std::to_string(aspectx) << ":" << std::to_string(aspecty) << std::endl;
+
+	float aspectRatio = aspectx/aspecty;
+	aspecty = 9;
+	aspectx = 9 * aspectRatio;
+
+	std::cout << "Corrected Aspect Ratio: " << std::to_string(aspectx) << ":" << std::to_string(aspecty) << std::endl;
+
 	projection = glm::ortho(-((float)aspectx)/2, ((float)aspectx)/2, -((float)aspecty)/2, ((float)aspecty)/2, 0.1f, 100.0f);
 	//projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 	glm::mat4 view = glm::mat4(1.0f);
@@ -161,7 +184,11 @@ bool InitEngine(int mode = 0)
 	glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, GL_FALSE, &view[0][0]);
 
+#if NOGRAB
+	std::cout << "THIS IS A DEBUG VERSION!!\nThis version does not grab the mouse, making the game unplayable\n-----------------\n";
+#else
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+#endif
 	projview = projection * view;
 
 	sidebar = new Quad();
@@ -227,6 +254,39 @@ void CreateFBO()
 }
 
 
+void LoadSounds()
+{
+	hitsound.loadFromFile("Assets/Sounds/wav/CH_Hit.wav");
+	grazeSound.loadFromFile("Assets/Sounds/wav/CH_Graze.wav");
+	deadnotice1.loadFromFile("Assets/Sounds/wav/CH_Lost_Notice1.wav");
+	deadnotice2.loadFromFile("Assets/Sounds/wav/CH_Lost_Notice2.wav");
+
+	one.loadFromFile("Assets/Sounds/wav/1.wav");
+	two.loadFromFile("Assets/Sounds/wav/2.wav");
+	three.loadFromFile("Assets/Sounds/wav/3.wav");
+	four.loadFromFile("Assets/Sounds/wav/4.wav");
+	five.loadFromFile("Assets/Sounds/wav/5.wav");
+	six.loadFromFile("Assets/Sounds/wav/6.wav");
+	seven.loadFromFile("Assets/Sounds/wav/7.wav");
+	eight.loadFromFile("Assets/Sounds/wav/8.wav");
+	nine.loadFromFile("Assets/Sounds/wav/9.wav");
+	zero.loadFromFile("Assets/Sounds/wav/0.wav");
+	ten.loadFromFile("Assets/Sounds/wav/10.wav");
+	eleven.loadFromFile("Assets/Sounds/wav/11.wav");
+	twelve.loadFromFile("Assets/Sounds/wav/12.wav");
+	teen.loadFromFile("Assets/Sounds/wav/teen.wav");
+	twenty.loadFromFile("Assets/Sounds/wav/20.wav");
+	thirty.loadFromFile("Assets/Sounds/wav/30.wav");
+	forty.loadFromFile("Assets/Sounds/wav/40.wav");
+	fifty.loadFromFile("Assets/Sounds/wav/50.wav");
+	sixty.loadFromFile("Assets/Sounds/wav/60.wav");
+	seventy.loadFromFile("Assets/Sounds/wav/70.wav");
+	eighty.loadFromFile("Assets/Sounds/wav/80.wav");
+	ninety.loadFromFile("Assets/Sounds/wav/90.wav");
+	hundred.loadFromFile("Assets/Sounds/wav/100.wav");
+	thousand.loadFromFile("Assets/Sounds/wav/1000.wav");
+}
+
 void CalcFPS()
 {
 	double thisTime = glfwGetTime();
@@ -252,6 +312,7 @@ void CalcFPS()
 
 void DrawInterface()
 {
+	glUseProgram(uiShader);
 	sidebar->Draw();
 }
 
@@ -268,9 +329,6 @@ void EndUpdate()
 	glBindVertexArray(quadVAO);
 	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	glUseProgram(uiShader);
-	DrawInterface();
 
 	xcur = 0;
 	ycur = 0;
@@ -515,6 +573,133 @@ void CreateUIShader()
 	glUniform1i(glGetUniformLocation(uiShader, "uitex"), 0);
 
 	glUseProgram(shader);
+}
+void CreateTextShader()
+{
+	const char* vertexShaderSource =
+		"#version 330 core\n"
+
+		"layout (location = 0) in vec3 aPos;\n"
+		"layout (location = 1) in vec2 atexCoords;\n"
+
+		"uniform float size;\n"
+		"uniform vec2 aspectRatio = vec2(16, 9);\n"
+		"uniform vec2 posAdd;\n"
+
+		"int nextLine;\n"
+
+		"out vec2 TexCoord;\n"
+
+		"void main()\n"
+		"{\n"
+			"vec3 totalSize = vec3(size * (aspectRatio.y/100), size * (aspectRatio.x/100), size);\n"
+			
+			"vec3 posPre = vec3(totalSize * aPos);\n"
+			"vec3 position = vec3(posPre.x + posAdd.x, posPre.y + posAdd.y, posPre.z);\n"
+			
+			"gl_Position = vec4(position, 1.0);\n"
+			
+			"TexCoord = atexCoords;\n"
+		"}\0"
+		;
+	const char* fragmentShaderSource =
+		"#version 330 core\n"
+		"out vec4 FragColor;\n"
+
+		"in vec2 TexCoord;\n"
+
+		"uniform sampler2D font;\n"
+
+		"void main()\n"
+		"{\n"
+			"vec4 texColor = texture(font, TexCoord);\n"
+			"if(texColor.a < 0.1)\n"
+				"discard;\n"
+			"FragColor = vec4(texColor.rgb, 1.0);\n"
+		"}\0"
+		;
+
+	// vertex shader
+	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+	// check for shader compile errors
+	int success;
+	char infoLog[512];
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+	// fragment shader
+	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+	// check for shader compile errors
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+	// link shaders
+	textShader = glCreateProgram();
+	glAttachShader(textShader, vertexShader);
+	glAttachShader(textShader, fragmentShader);
+	glLinkProgram(textShader);
+	// check for linking errors
+	glGetProgramiv(textShader, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(textShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+	}
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	glUseProgram(textShader);
+	glUniform1i(glGetUniformLocation(textShader, "font"), 0);
+
+	font = LoadTexture("Assets/Sprites/Arial.png");
+
+	glUseProgram(shader);
+}
+
+unsigned int LoadTexture(std::string str)
+{
+	stbi_set_flip_vertically_on_load(true);
+	unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load image, create texture and generate mipmaps
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load(str.c_str(), &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        GLenum format;
+        if (nrChannels == 1)
+            format = GL_RED;
+        else if (nrChannels == 3)
+            format = GL_RGB;
+        else if (nrChannels == 4)
+            format = GL_RGBA;
+
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
+
+	return texture;
 }
 
 void ProcessInput()
