@@ -4,7 +4,8 @@
 class SpiralScene : public Scene
 {
 public:
-	SpiralScene(float* x, float* y, glm::mat4 projv) : Scene(x, y, projv)
+	SpiralScene(PlayerVars* pvars, CESoundMap* sm, CurserSoundPlayer* sp) 
+		: Scene(pvars, sm, sp)
 	{
 		LoadTexture("Assets/Sprites/Cursor.png");
 		InitScene();
@@ -12,7 +13,7 @@ public:
 
 	void InitScene();
 
-	void Draw(unsigned int& shader, GLFWwindow* window, double dt);
+	void Draw(unsigned int& shader, double dt);
 
 private:
 	void Update(double dt);

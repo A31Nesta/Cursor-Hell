@@ -14,9 +14,6 @@
 #include <algorithm>
 #include <numeric>
 
-#include "Sound/CurserSound.hpp"
-
-
 // Cursor Hell
 #include "Scene.hpp"
 
@@ -38,6 +35,7 @@ unsigned int uiShader;
 unsigned int textShader;
 
 unsigned int font;
+unsigned int arrowTex;
 
 double lastTime = 0;
 
@@ -58,6 +56,44 @@ float lastY = SCR_HEIGHT/2;
 float xcur, ycur;
 
 glm::mat4 projview = glm::mat4(1.0f);
+
+
+// Sound
+CESound hitsound;
+CESound grazeSound;
+CESound deadnotice1;
+CESound deadnotice2;
+
+CESound one;
+CESound two;
+CESound three;
+CESound four;
+CESound five;
+CESound six;
+CESound seven;
+CESound eight;
+CESound nine;
+CESound zero;
+CESound ten;
+CESound eleven;
+CESound twelve;
+CESound teen;
+
+CESound twenty;
+CESound thirty;
+CESound forty;
+CESound fifty;
+CESound sixty;
+CESound seventy;
+CESound eighty;
+CESound ninety;
+CESound hundred;
+CESound thousand;
+
+CESoundMap sounds;
+
+CurserSoundPlayer sp;
+
 
 
 void ProcessInput();
@@ -194,6 +230,8 @@ bool InitEngine(int mode = 0)
 	sidebar = new Quad();
 	sidebar->LoadTexture("./Assets/Background2.png");
 
+	arrowTex = LoadTexture("Assets/Sprites/Cursor.png");
+
 
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD); // this is default
@@ -285,6 +323,35 @@ void LoadSounds()
 	ninety.loadFromFile("Assets/Sounds/wav/90.wav");
 	hundred.loadFromFile("Assets/Sounds/wav/100.wav");
 	thousand.loadFromFile("Assets/Sounds/wav/1000.wav");
+
+	sounds["hit"]		= hitsound;
+	sounds["graze"]		= grazeSound;
+	sounds["dnotice1"]	= deadnotice1;
+	sounds["dnotice2"]	= deadnotice2;
+	sounds["one"]		= one;
+	sounds["two"]		= two;
+	sounds["three"]		= three;
+	sounds["four"]		= four;
+	sounds["five"]		= five;
+	sounds["six"]		= six;
+	sounds["seven"]		= seven;
+	sounds["eight"]		= eight;
+	sounds["nine"]		= nine;
+	sounds["zero"]		= zero;
+	sounds["ten"]		= ten;
+	sounds["eleven"]	= eleven;
+	sounds["twelve"]	= twelve;
+	sounds["teen"]		= teen;
+	sounds["twenty"]	= twenty;
+	sounds["thirty"]	= thirty;
+	sounds["forty"]		= forty;
+	sounds["fifty"]		= fifty;
+	sounds["sixty"]		= sixty;
+	sounds["seventy"]	= seventy;
+	sounds["eigthy"]	= eighty;
+	sounds["ninety"]	= ninety;
+	sounds["hundred"]	= hundred;
+	sounds["thousand"]	= thousand;
 }
 
 void CalcFPS()
@@ -718,5 +785,5 @@ void DrawQuad(Quad& q, std::vector<Transform> t)
 */
 void DrawScene(Scene& s)
 {
-	s.Draw(shader, window, deltaTime);
+	s.Draw(shader, deltaTime);
 }

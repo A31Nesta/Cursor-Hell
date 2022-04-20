@@ -4,22 +4,22 @@
 #include "Types/Polygon.hpp"
 #include "GUI/CurserText.hpp"
 
+#include "Sound/CurserSound.hpp"
+#include "PlayerVars.hpp"
+
 // std
 #include <cmath>
 
 class Scene
 {
 public:
-	Scene(float* x, float* y, glm::mat4 projv);
+	Scene(PlayerVars* pvars, CESoundMap* sm, CurserSoundPlayer* sp);
 
-	virtual void Draw(unsigned int& shader, GLFWwindow* window, double dt);
+	virtual void Draw(unsigned int& shader, double dt);
 	void DrawText(unsigned int& textShader);
 
 protected:
 	virtual void InitScene();
-
-	void GenTrap();
-	void UpdatePlayer(GLFWwindow* window);
 
 	void LoseLife();
 
@@ -57,6 +57,13 @@ protected:
 		stbi_image_free(data);
 	}
 
+
+	CurserSoundPlayer* soundPlayer;
+
+	CESoundMap* smap;
+	sf::Sound hit;
+	sf::Sound graze;
+
 	float patternTimer = 0.0f;
 	
 	float totalTime = 15.0f; // After this time (seconds), no more bullets will be generated
@@ -65,39 +72,17 @@ protected:
 	unsigned int texture;
 	Quad booletSprite;
 
-	int S_X = -1, S_Y = -1;
-	float* xpos;
-	float* ypos;
-
-	glm::mat4 projview;
-	glm::vec4 smallLimit; // -1, -1 coordinate
-	glm::vec4 bigLimit;   //  1,  1 coordinate
-
-
-	int lives = 3;
-	bool gameOver = false;
-
-	bool lost = false;
-	glm::vec2 lostPoint = glm::vec2(0.0f);
-	glm::vec2 lostSize;
-	Quad deathQuad;
-
-	glm::vec2 plPos = glm::vec2(0.0f);
-	glm::vec2 plSize = glm::vec2(0.075f);
-	Quad player;
+	PlayerVars* pv;
+	// int* lives;
+	// bool* gameOver;
+	// bool* lost;
+	// glm::vec2* plPos;  // = glm::vec2(0.0f);
+	// glm::vec2* plSize; // = glm::vec2(0.075f);
 
 	glm::vec2 origin = glm::vec2(-1, 1);
 	int numberOfBullets = 0;
 	
 	unsigned int numberOfMaxBoolets = 1000;
 	std::vector<Bullet> bullets;
-
-	uint32_t maxTraps = 5;
-	std::vector<Polygon> traps;
-	std::vector<bool> trapsAvailable;
-	float trapSpawnTimer = 0.0f;
-
-
-	Text livesIndicator;
 };
 
