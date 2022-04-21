@@ -348,7 +348,7 @@ void LoadSounds()
 	sounds["fifty"]		= fifty;
 	sounds["sixty"]		= sixty;
 	sounds["seventy"]	= seventy;
-	sounds["eigthy"]	= eighty;
+	sounds["eighty"]	= eighty;
 	sounds["ninety"]	= ninety;
 	sounds["hundred"]	= hundred;
 	sounds["thousand"]	= thousand;

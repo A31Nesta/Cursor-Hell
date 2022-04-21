@@ -2,6 +2,11 @@
 
 void SpiralScene::InitScene()
 {
+	bullets.clear();
+
+	numberOfBullets = 0;
+	patternTimer = 0.0f;
+	finished = false;
 	for (int i = 0; i < numberOfMaxBoolets; i++)
 	{
 		Bullet t(origin, 0.0f, glm::vec2(0.056f, 0.0875f), 0.04f, &texture);
@@ -64,9 +69,11 @@ uint8_t SpiralScene::Update(double dt)
 
 uint8_t SpiralScene::Draw(unsigned int& shader, double dt)
 {
+	if (finished) return 2;
 	uint8_t status = Update(dt);
 
 	if (status != 2) booletSprite.Draw(shader, bullets, numberOfBullets);
+	else finished = true;
 
 	return status;
 }

@@ -21,9 +21,11 @@ int main()
 	sensitivity = 0.1f;
 	SpiralScene spiralScene(&pv, &sounds, &sp);
 	CHPattern1 generic1(&pv, &sounds, &sp);
+	CHPattern2 generic2(&pv, &sounds, &sp);
 
 	std::vector<Scene*> scenes;
 	scenes.push_back(&spiralScene);
+	scenes.push_back(&generic2);
 	scenes.push_back(&generic1);
 
 
@@ -36,7 +38,19 @@ int main()
 		
 		for (size_t i = 0; i < scenes.size(); i++)
 		{
-			if (scenes.at(i)->Draw(shader, deltaTime) == 1) { break; }
+			uint8_t status = scenes.at(i)->Draw(shader, deltaTime);
+			if (status == 1) {
+				if (i == 0 && scenes.at(scenes.size()-1)->patternTimer > scenes.at(scenes.size()-1)->totalTime) {
+					if (scenes.at(scenes.size()-1)->Draw(shader, deltaTime) == 2) { scenes.at(scenes.size()-1)->InitScene(); }
+				}
+				break;
+			}
+			else if (status == 3 && i == scenes.size() -1)
+			{
+				for (size_t j = 0; j < scenes.size()-1; j++) {
+					scenes.at(j)->InitScene();
+				}
+			}
 		}
 		
 		

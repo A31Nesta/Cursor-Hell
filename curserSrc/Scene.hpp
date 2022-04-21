@@ -14,12 +14,16 @@ class Scene
 {
 public:
 	Scene(PlayerVars* pvars, CESoundMap* sm, CurserSoundPlayer* sp);
+	virtual void InitScene();
 
 	virtual uint8_t Draw(unsigned int& shader, double dt);
 	void DrawText(unsigned int& textShader);
 
+	float patternTimer = 0.0f;
+	
+	float totalTime = 30.0f; // After this time (seconds), no more bullets will be generated
+
 protected:
-	virtual void InitScene();
 
 	void LoseLife();
 
@@ -64,10 +68,8 @@ protected:
 	sf::Sound hit;
 	sf::Sound graze;
 
-	float patternTimer = 0.0f;
-	
-	float totalTime = 30.0f; // After this time (seconds), no more bullets will be generated
-	float timeAfterFinished = 10.0f; // Time to clean all bullets from the screen
+	float timeAfterFinished = 20.0f; // Time to clean all bullets from the screen
+	bool finished = false;
 
 	unsigned int texture;
 	Quad booletSprite;

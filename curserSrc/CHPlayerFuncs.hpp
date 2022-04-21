@@ -96,6 +96,8 @@ void UpdateLives()
 		}
 	}
     if (lastFrameLives != pv.lives) {
+		// pv.lives = 3;
+
         livesIndicator.SetString("Lives: " + std::to_string(pv.lives));
 
         lostPoint = pv.plPos;
