@@ -2,6 +2,7 @@
 #include "curserSrc/CHEngine.hpp"
 #include "curserSrc/CHPlayerFuncs.hpp"
 #include "curserSrc/SpiralScene.hpp"
+#include "curserSrc/Patterns/GenericPatterns.hpp"
 #include "curserSrc/Types/Bullet.hpp"
 
 int main()
@@ -18,7 +19,13 @@ int main()
 	SetupPlayer();
 
 	sensitivity = 0.1f;
-	SpiralScene scene(&pv, &sounds, &sp);
+	SpiralScene spiralScene(&pv, &sounds, &sp);
+	CHPattern1 generic1(&pv, &sounds, &sp);
+
+	std::vector<Scene*> scenes;
+	scenes.push_back(&spiralScene);
+	scenes.push_back(&generic1);
+
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -27,7 +34,12 @@ int main()
 
 		UpdatePlayerRelated();
 		
-		scene.Draw(shader, deltaTime);
+		for (size_t i = 0; i < scenes.size(); i++)
+		{
+			if (scenes.at(i)->Draw(shader, deltaTime) == 1) { break; }
+		}
+		
+		
 		DrawPlayerRelated();
 		DrawInterface();
 		DrawText();

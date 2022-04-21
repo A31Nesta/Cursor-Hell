@@ -13,9 +13,9 @@ public:
 
 	void InitScene();
 
-	void Draw(unsigned int& shader, double dt);
+	uint8_t Draw(unsigned int& shader, double dt);
 
 private:
-	void Update(double dt);
+	uint8_t Update(double dt);
 };
 

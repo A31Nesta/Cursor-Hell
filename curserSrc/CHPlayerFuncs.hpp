@@ -49,6 +49,9 @@ void SetupPlayer()
 	deathQuad = new Quad();
 	player = new Quad();
 
+	hit.setBuffer(sounds.at("hit"));
+	graze.setBuffer(sounds.at("graze"));
+
     deathQuad->LoadTexture("Assets/Sprites/explosion.png");
 
     scoreIndicator.SetPosition(glm::vec2(0.7f, 0.75f));
@@ -155,6 +158,7 @@ void UpdatePlayer()
 			}
 			if (!pv.lost) {
 				if (p.HasCollided(pv.plPos, 0.04)) { 
+					hit.play();
 					pv.lost = true;
 					pv.lives -= 1;
 					hit.play();

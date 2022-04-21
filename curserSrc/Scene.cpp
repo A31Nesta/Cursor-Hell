@@ -23,7 +23,7 @@ void Scene::LoseLife()
 	hit.play();
 }
 
-void Scene::Draw(unsigned int& shader, double dt)
+uint8_t Scene::Draw(unsigned int& shader, double dt)
 {
 	booletSprite.Draw(shader, bullets);
 }

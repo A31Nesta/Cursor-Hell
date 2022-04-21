@@ -15,7 +15,7 @@ class Scene
 public:
 	Scene(PlayerVars* pvars, CESoundMap* sm, CurserSoundPlayer* sp);
 
-	virtual void Draw(unsigned int& shader, double dt);
+	virtual uint8_t Draw(unsigned int& shader, double dt);
 	void DrawText(unsigned int& textShader);
 
 protected:
@@ -66,7 +66,7 @@ protected:
 
 	float patternTimer = 0.0f;
 	
-	float totalTime = 15.0f; // After this time (seconds), no more bullets will be generated
+	float totalTime = 30.0f; // After this time (seconds), no more bullets will be generated
 	float timeAfterFinished = 10.0f; // Time to clean all bullets from the screen
 
 	unsigned int texture;

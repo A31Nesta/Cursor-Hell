@@ -1,6 +1,6 @@
-#include "SpiralScene.hpp"
+#include "GenericPatterns.hpp"
 
-void SpiralScene::InitScene()
+void CHPattern1::InitScene()
 {
 	for (int i = 0; i < numberOfMaxBoolets; i++)
 	{
@@ -10,13 +10,14 @@ void SpiralScene::InitScene()
 	}
 }
 
-uint8_t SpiralScene::Update(double dt)
+uint8_t CHPattern1::Update(double dt)
 {
 	if (pv->gameOver) { return 0; }	
 
-	// 0 = Game Over
+    // 0 = Game Over
 	// 1 = Draw
 	// 2 = Stop drawing
+    // 3 = Draw but start with next
 
     patternTimer += dt;
 	if (patternTimer > totalTime + timeAfterFinished) {
@@ -30,11 +31,18 @@ uint8_t SpiralScene::Update(double dt)
 
 	for (int i = 0; i < numberOfBullets; i++)
 	{
+        originXOffset = std::sin(i) * 7;
+
+        if (pv->plPos.y > 3.0f) PlayerIsOnTop = true;
+        else PlayerIsOnTop = false;
+
 		float distance = 0.01f;
 		float angle;
 		if (i == numberOfBullets-1) {
-			angle = (360.0f / (50.0f-(i/50.0f)) * i);
-			bullets[i].SetRotation(angle - 90);
+			angle = ((90.0f / 10.0f) * (float)(i%10) - 135);
+            bullets[i].SetPosition(glm::vec2(origin.x + originXOffset, 3.0f));
+			if (PlayerIsOnTop) bullets[i].SetRotation(angle + 90);
+            else bullets[i].SetRotation(angle - 90);
 		}
 		else {
 			angle = bullets[i].GetRotation() + 90;
@@ -45,9 +53,10 @@ uint8_t SpiralScene::Update(double dt)
 
 			glm::vec2 pos = bullets[i].GetPosition();
 			if (patternTimer < totalTime && ((pos.x > 10 || pos.x < -10) || (pos.y > 5 || pos.y < -5))) {
-				bullets[i].SetPosition(origin);
+				bullets[i].SetPosition(glm::vec2(origin.x + originXOffset, 3.0f));
+                if (PlayerIsOnTop) bullets[i].SetRotation(angle + 90);
+                else bullets[i].SetRotation(angle - 90);
 			}
-			if (numberOfBullets < numberOfMaxBoolets) bullets[i].SetRotation(angle + 2.5f*i/numberOfBullets - 90);
 			bullets[i].Translate(glm::vec2(x, y));
 		}
 
@@ -58,15 +67,15 @@ uint8_t SpiralScene::Update(double dt)
 		}
 	}
 
-	if (patternTimer > totalTime) return 3;
-	return 1;
+    if (patternTimer > totalTime) return 3;
+    return 1;
 }
 
-uint8_t SpiralScene::Draw(unsigned int& shader, double dt)
+uint8_t CHPattern1::Draw(unsigned int& shader, double dt)
 {
 	uint8_t status = Update(dt);
 
 	if (status != 2) booletSprite.Draw(shader, bullets, numberOfBullets);
 
-	return status;
+    return status;
 }
