@@ -13,6 +13,7 @@ int main()
 		return -1;
 	}
 	std::cout << "Engine initialized!" << std::endl;
+	glfwSwapInterval(1);
 
 	//sp.SayTotalScore(&sounds, 420);
 

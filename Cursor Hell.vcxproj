@@ -133,32 +133,45 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)SFML/includeWin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;sfml-system.lib;sfml-audio.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)SFML/libWin</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="curserSrc\GUI\CurserText.cpp" />
+    <ClCompile Include="curserSrc\GUI\CurserUIQuad.cpp" />
+    <ClCompile Include="curserSrc\Patterns\GenericPatterns.cpp" />
+    <ClCompile Include="curserSrc\Quad.cpp" />
+    <ClCompile Include="curserSrc\Scene.cpp" />
+    <ClCompile Include="curserSrc\SpiralScene.cpp" />
+    <ClCompile Include="curserSrc\stb_image_something.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Quad.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SpiralScene.cpp" />
-    <ClCompile Include="stb_image_something.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CHEngine.hpp" />
-    <ClInclude Include="Quad.hpp" />
-    <ClInclude Include="Scene.hpp" />
-    <ClInclude Include="SpiralScene.hpp" />
-    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="curserSrc\CHPlayerFuncs.hpp" />
+    <ClInclude Include="curserSrc\GUI\CurserText.hpp" />
+    <ClInclude Include="curserSrc\GUI\CurserUIQuad.hpp" />
+    <ClInclude Include="curserSrc\Patterns\GenericPatterns.hpp" />
+    <ClInclude Include="curserSrc\PlayerVars.hpp" />
+    <ClInclude Include="curserSrc\Quad.hpp" />
+    <ClInclude Include="curserSrc\Scene.hpp" />
+    <ClInclude Include="curserSrc\Sound\CurserSound.hpp" />
+    <ClInclude Include="curserSrc\SpiralScene.hpp" />
+    <ClInclude Include="curserSrc\stb_image.h" />
+    <ClInclude Include="curserSrc\Types\Bullet.hpp" />
+    <ClInclude Include="curserSrc\Types\Polygon.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

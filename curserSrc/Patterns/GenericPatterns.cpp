@@ -29,8 +29,11 @@ uint8_t CHPattern1::Update(double dt)
     }
 
 	if (numberOfBullets < numberOfMaxBoolets) {
-		numberOfBullets++;
-		//std::cout << "NoB: " << std::to_string(numberOfBullets) << std::endl;
+		genBulletTimer += dt * genBulletTimeMultiplier;
+		if (genBulletTimer > 1) {
+			numberOfBullets++;
+			genBulletTimer = 0.0;
+		}
 	}
 
 	for (int i = 0; i < numberOfBullets; i++)
@@ -117,8 +120,11 @@ uint8_t CHPattern2::Update(double dt)
     }
 
 	if (numberOfBullets < numberOfMaxBoolets) {
-		numberOfBullets++;
-		//std::cout << "NoB: " << std::to_string(numberOfBullets) << std::endl;
+		genBulletTimer += dt * genBulletTimeMultiplier;
+		if (genBulletTimer > 1) {
+			numberOfBullets++;
+			genBulletTimer = 0.0;
+		}
 	}
 
 	for (int i = 0; i < numberOfBullets; i++)
@@ -197,8 +203,11 @@ uint8_t CHPattern3::Update(double dt)
     }
 
 	if (numberOfBullets < numberOfMaxBoolets) {
-		numberOfBullets++;
-		//std::cout << "NoB: " << std::to_string(numberOfBullets) << std::endl;
+		genBulletTimer += dt * genBulletTimeMultiplier;
+		if (genBulletTimer > 1) {
+			numberOfBullets++;
+			genBulletTimer = 0.0;
+		}
 	}
 
 	for (int i = 0; i < numberOfBullets; i++)

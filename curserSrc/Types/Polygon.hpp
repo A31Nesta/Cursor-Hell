@@ -1,6 +1,8 @@
 #pragma once
 #include "Bullet.hpp"
 
+#include <cmath>
+
 class Polygon
 {
 public:

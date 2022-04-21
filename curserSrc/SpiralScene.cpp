@@ -29,8 +29,11 @@ uint8_t SpiralScene::Update(double dt)
     }
 
 	if (numberOfBullets < numberOfMaxBoolets) {
-		numberOfBullets++;
-		//std::cout << "NoB: " << std::to_string(numberOfBullets) << std::endl;
+		genBulletTimer += dt * genBulletTimeMultiplier;
+		if (genBulletTimer > 1) {
+			numberOfBullets++;
+			genBulletTimer = 0.0;
+		}
 	}
 
 	for (int i = 0; i < numberOfBullets; i++)
@@ -52,7 +55,7 @@ uint8_t SpiralScene::Update(double dt)
 			if (patternTimer < totalTime && ((pos.x > 10 || pos.x < -10) || (pos.y > 5 || pos.y < -5))) {
 				bullets[i].SetPosition(origin);
 			}
-			if (numberOfBullets < numberOfMaxBoolets) bullets[i].SetRotation(angle + 2.5f*i/numberOfBullets - 90);
+			if (numberOfBullets < numberOfMaxBoolets) bullets[i].SetRotation(angle + (100.0*dt*i/numberOfBullets - 90));
 			bullets[i].Translate(glm::vec2(x, y));
 		}
 

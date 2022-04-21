@@ -26,4 +26,5 @@ void Scene::LoseLife()
 uint8_t Scene::Draw(unsigned int& shader, double dt)
 {
 	booletSprite.Draw(shader, bullets);
+	return 1;
 }

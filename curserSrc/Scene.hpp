@@ -83,6 +83,9 @@ protected:
 
 	glm::vec2 origin = glm::vec2(-1, 1);
 	int numberOfBullets = 0;
+
+	double genBulletTimer = false;
+	float genBulletTimeMultiplier = 75.0f;
 	
 	unsigned int numberOfMaxBoolets = 1000;
 	std::vector<Bullet> bullets;
