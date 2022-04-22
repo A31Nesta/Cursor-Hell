@@ -61,12 +61,17 @@ protected:
 		stbi_image_free(data);
 	}
 
+	void StartMusic();
 
 	CurserSoundPlayer* soundPlayer;
 
 	CESoundMap* smap;
 	sf::Sound hit;
 	sf::Sound graze;
+
+	sf::Music moosic;
+	uint8_t volume = 50;
+	bool startMusic = true;
 
 	float timeAfterFinished = 20.0f; // Time to clean all bullets from the screen
 	bool finished = false;

@@ -10,7 +10,7 @@ int lastFrameLives = 3;
 // bool gameOver = false;
 // glm::vec2 plPos = glm::vec2(0.0f);
 // glm::vec2 plSize = glm::vec2(1.0f);
-PlayerVars pv(3, false, false, glm::vec2(0.0f), glm::vec2(0.075f));
+PlayerVars pv(3, false, false, glm::vec2(0.0f), glm::vec2(0.25f));
 
 glm::vec4 smallLimit; // -1, -1 coordinate
 glm::vec4 bigLimit;   //  1,  1 coordinate
@@ -48,6 +48,8 @@ void SetupPlayer()
 	booletSprite = new Quad();
 	deathQuad = new Quad();
 	player = new Quad();
+
+	player->LoadTexture("Assets/Sprites/weirdplayer.png");
 
 	hit.setBuffer(sounds.at("hit"));
 	graze.setBuffer(sounds.at("graze"));
@@ -105,7 +107,7 @@ void UpdateLives()
 
         if (pv.lives < 0) {
             pv.gameOver = true;
-            livesIndicator.SetString("You suck");
+            livesIndicator.SetString("Game Over");
             sp.SayTotalScore(&sounds, (uint32_t)points);
         }
     }

@@ -35,6 +35,7 @@ int main()
 		CalcFPS();
 		ProcessInput();
 
+		DrawBackground();
 		UpdatePlayerRelated();
 		
 		for (size_t i = 0; i < scenes.size(); i++)

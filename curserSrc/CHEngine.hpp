@@ -48,6 +48,8 @@ float invDT = 0.0;
 glm::mat4 projection = glm::mat4(1.0f);
 
 Quad* sidebar;
+Quad* bg;
+Quad* origin;
 
 float sensitivity = 0.1f;
 bool firstMouse = true;
@@ -230,6 +232,11 @@ bool InitEngine(int mode = 0)
 	sidebar = new Quad();
 	sidebar->LoadTexture("./Assets/Background2.png");
 
+	bg = new Quad();
+	origin = new Quad();
+	bg->LoadTexture("./Assets/Fractal.png");
+	origin->LoadTexture("./Assets/Origin.png");
+
 	arrowTex = LoadTexture("Assets/Sprites/Cursor.png");
 
 
@@ -377,10 +384,20 @@ void CalcFPS()
 	}
 }
 
-void DrawInterface()
+void DrawBackground()
 {
 	glUseProgram(uiShader);
+	bg->Draw();
+	glUseProgram(shader);
+}
+
+void DrawInterface()
+{
+	origin->Draw(shader, glm::vec2(-1, 1), glm::vec2(0.075f));
+
+	glUseProgram(uiShader);
 	sidebar->Draw();
+
 }
 
 void EndUpdate()

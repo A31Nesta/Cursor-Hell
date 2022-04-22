@@ -12,6 +12,10 @@ void CHPattern1::InitScene()
 
 		bullets.push_back(t);
 	}
+
+	moosic.openFromFile("Assets/ShittyMusic/2.wav");
+	moosic.setVolume(volume);
+	startMusic = true;
 }
 
 uint8_t CHPattern1::Update(double dt)
@@ -23,10 +27,16 @@ uint8_t CHPattern1::Update(double dt)
 	// 2 = Stop drawing
     // 3 = Draw but start with next
 
+	StartMusic();
+
     patternTimer += dt;
 	if (patternTimer > totalTime + timeAfterFinished) {
 		return 2;
     }
+
+	if (pv->lives < 0 && moosic.getStatus() == sf::SoundSource::Status::Playing) {
+		moosic.stop();
+	}
 
 	if (numberOfBullets < numberOfMaxBoolets) {
 		genBulletTimer += dt * genBulletTimeMultiplier;
@@ -103,6 +113,10 @@ void CHPattern2::InitScene()
 
 		bullets.push_back(t);
 	}
+
+	moosic.openFromFile("Assets/ShittyMusic/3.wav");
+	moosic.setVolume(volume);
+	startMusic = true;
 }
 
 uint8_t CHPattern2::Update(double dt)
@@ -114,10 +128,16 @@ uint8_t CHPattern2::Update(double dt)
 	// 2 = Stop drawing
     // 3 = Draw but start with next
 
+	StartMusic();
+
     patternTimer += dt;
 	if (patternTimer > totalTime + timeAfterFinished) {
 		return 2;
     }
+
+	if (pv->lives < 0 && moosic.getStatus() == sf::SoundSource::Status::Playing) {
+		moosic.stop();
+	}
 
 	if (numberOfBullets < numberOfMaxBoolets) {
 		genBulletTimer += dt * genBulletTimeMultiplier;
@@ -186,6 +206,10 @@ void CHPattern3::InitScene()
 
 		bullets.push_back(t);
 	}
+
+	moosic.openFromFile("Assets/ShittyMusic/1.wav");
+	moosic.setVolume(volume);
+	startMusic = true;
 }
 
 uint8_t CHPattern3::Update(double dt)
@@ -197,10 +221,16 @@ uint8_t CHPattern3::Update(double dt)
 	// 2 = Stop drawing
     // 3 = Draw but start with next
 
+	StartMusic();
+
     patternTimer += dt;
 	if (patternTimer > totalTime + timeAfterFinished) {
 		return 2;
     }
+
+	if (pv->lives < 0 && moosic.getStatus() == sf::SoundSource::Status::Playing) {
+		moosic.stop();
+	}
 
 	if (numberOfBullets < numberOfMaxBoolets) {
 		genBulletTimer += dt * genBulletTimeMultiplier;

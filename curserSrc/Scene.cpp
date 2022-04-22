@@ -21,6 +21,18 @@ void Scene::LoseLife()
 	pv->lives -= 1;
 	
 	hit.play();
+
+	if (pv->lives < 0 && moosic.getStatus() == sf::SoundSource::Status::Playing) {
+		moosic.stop();
+	}
+}
+
+void Scene::StartMusic()
+{
+	if (startMusic) {
+		moosic.play();
+		startMusic = false;
+	}
 }
 
 uint8_t Scene::Draw(unsigned int& shader, double dt)
