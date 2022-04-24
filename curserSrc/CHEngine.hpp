@@ -156,6 +156,10 @@ bool InitEngine(int mode = 0)
 		SCR_WIDTH  = SCR_WIDTH  / 1.5f;
 		SCR_HEIGHT = SCR_HEIGHT / 1.5f;
 	}
+	else if (mode == 2) {
+		SCR_WIDTH  = 1280;
+		SCR_HEIGHT = 720;
+	}
 
 #if FORCERES
 	REN_WIDTH  = 1920;
@@ -604,13 +608,14 @@ void CreateUIShader()
 
 		"in vec2 TexCoords;\n"
 
+		"uniform float opacity = 1.0;\n"
 		"uniform sampler2D uitex;\n"
 
 		"void main()\n"
 		"{\n"
 			"vec4 col = texture(uitex, TexCoords);\n"
 			"if (col.a < 0.5) { discard; }\n"
-			"FragColor = vec4(col.rgb, 1.0);\n"
+			"FragColor = vec4(col.rgb, opacity);\n"
 			"//FragColor = vec4(TexCoords.x, TexCoords.y, 0.0, 1.0);\n"
 		"}\0"
 		;

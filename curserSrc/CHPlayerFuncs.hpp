@@ -10,7 +10,7 @@ int lastFrameLives = 3;
 // bool gameOver = false;
 // glm::vec2 plPos = glm::vec2(0.0f);
 // glm::vec2 plSize = glm::vec2(1.0f);
-PlayerVars pv(3, false, false, glm::vec2(0.0f), glm::vec2(0.25f));
+PlayerVars pv(3, false, false, glm::vec2(-1, -3), glm::vec2(0.25f));
 
 glm::vec4 smallLimit; // -1, -1 coordinate
 glm::vec4 bigLimit;   //  1,  1 coordinate
@@ -95,22 +95,23 @@ void UpdateLives()
 		lostSize += glm::vec2(0.125f * 100 * deltaTime);
 		if (lostSize.x > 20.0f) {
 			pv.lost = false;
+			lostSize = glm::vec2(0.25f);
+		}
+		if (lastFrameLives != pv.lives) {
+			// pv.lives = 3;
+
+			livesIndicator.SetString("Lives: " + std::to_string(pv.lives));
+
+			lostPoint = pv.plPos;
+			lostSize = glm::vec2(0.25f);
+
+			if (pv.lives < 0) {
+				pv.gameOver = true;
+				livesIndicator.SetString("Game Over");
+				sp.SayTotalScore(&sounds, (uint32_t)points);
+			}
 		}
 	}
-    if (lastFrameLives != pv.lives) {
-		// pv.lives = 3;
-
-        livesIndicator.SetString("Lives: " + std::to_string(pv.lives));
-
-        lostPoint = pv.plPos;
-        lostSize = glm::vec2(0.25f);
-
-        if (pv.lives < 0) {
-            pv.gameOver = true;
-            livesIndicator.SetString("Game Over");
-            sp.SayTotalScore(&sounds, (uint32_t)points);
-        }
-    }
     lastFrameLives = pv.lives;
 }
 
@@ -205,4 +206,209 @@ void DeletePtrs()
 	delete booletSprite;
 	delete deathQuad;
 	delete player;
+}
+
+
+// TITLE SCREEN AND DEATH
+bool isInTitle = true;
+
+float deadCounter = 0.0f;
+float opacity = 1.0f;
+
+int selectedButton = 0;
+bool canUp = true;
+bool canDown = true;
+
+Text playText;
+Text exitText;
+
+Text gameOverText;
+
+bool inSplash = true;
+float splashTimer;
+Quad* splash;
+
+Quad* titleBG;
+Quad* deathBG;
+
+Quad* titleLogo;
+Quad* titleCur;
+
+glm::vec2 titleLogoPos  = glm::vec2(-5.0f, 2.5f);
+glm::vec2 titleLogoSize = glm::vec2(2.645f, 1.800f);
+
+glm::vec2 titleCurPos  = glm::vec2(6.25f, -2.0f);
+glm::vec2 titleCurSize = glm::vec2(0.75f);
+
+void InitTitle()
+{
+	splash = new Quad();
+
+	titleBG = new Quad();
+	deathBG = new Quad();
+
+	titleLogo = new Quad();
+	titleCur = new Quad();
+
+	splash->LoadTexture("Assets/Splash.png");
+
+	titleLogo->LoadTexture("Assets/logoWhite.png");
+	titleBG->LoadTexture("Assets/titleBG.png");
+	titleCur->LoadTexture("Assets/Sprites/menuSelection.png");
+
+	deathBG->LoadTexture("Assets/deadBG.png");
+
+	playText.SetPosition(glm::vec2(0.75f, -0.5f));
+	playText.SetScale(0.75f);
+	playText.Init("Play");
+
+	exitText.SetPosition(glm::vec2(0.75f, -0.9f));
+	exitText.SetScale(0.75f);
+	exitText.Init("Exit");
+
+	gameOverText.SetPosition(glm::vec2(-0.25f, 0.0f));
+	gameOverText.SetScale(0.75f);
+	gameOverText.Init("Game Over");
+}
+
+void UpdateTitle(std::vector<Scene*>& scenes)
+{
+	// UP
+	if ((glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) && canUp) {
+		canUp = false;
+		if (selectedButton > 0) selectedButton--;
+	}
+	else if ((glfwGetKey(window, GLFW_KEY_UP) == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE) && !canUp) {
+		canUp = true;
+	}
+
+	// DOWN
+	if ((glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) && canDown) {
+		canDown = false;
+		if (selectedButton < 1) selectedButton++;
+	}
+	else if ((glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE) && !canDown) {
+		canDown = true;
+	}
+
+	// ENTER
+	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+		if (selectedButton == 0) {
+			isInTitle = false;
+			for (size_t j = 0; j < scenes.size(); j++) {
+				scenes.at(j)->InitScene();
+				opacity = 1.0f;
+			}
+		}
+		else if (selectedButton == 1) {
+			glfwSetWindowShouldClose(window, true);
+		}
+	}
+
+	// UPDATE CURSOR
+	switch (selectedButton)
+	{
+	case 0:
+		titleCurPos = glm::vec2(6.25f, -2.0f);
+		break;
+	
+	case 1:
+		titleCurPos = glm::vec2(6.25f, -3.75f);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void DrawTitle(std::vector<Scene*>& scenes)
+{
+	UpdateTitle(scenes);
+
+	glUseProgram(uiShader);
+	titleBG->Draw();
+
+	glUseProgram(shader);
+	titleLogo->Draw(shader, titleLogoPos, titleLogoSize);
+	titleCur->Draw(shader, titleCurPos, titleCurSize);
+
+	glUseProgram(textShader);
+	glBindTexture(GL_TEXTURE_2D, font);
+	playText.DrawText(textShader);
+	exitText.DrawText(textShader);
+}
+
+void DrawGameOver()
+{
+	deadCounter += deltaTime;
+	glUseProgram(uiShader);
+
+	bool deadPastLimit = deadCounter > 5;
+	
+	if (deadPastLimit) {
+		opacity -= deltaTime * 2;
+		if (opacity < 0) {
+			opacity = 0.0f;
+			deadCounter = 0.0f;
+
+			pv.gameOver = false;
+			pv.plPos = glm::vec2(-1, -3);
+			pv.lives = 3;
+			pv.lost = false;
+
+			trapSize = 2.0f;
+			trapSpawnTimer = 0.0f;
+			points = 0.0f;
+			for (uint32_t i = 0; i < trapsAvailable.size(); i++) {
+				traps.at(i).Destroy();
+				trapsAvailable.at(i) = true;
+			}
+
+			isInTitle = true;
+		}
+
+		titleBG->Draw();
+		glUniform1f(glGetUniformLocation(uiShader, "opacity"), opacity);
+	}
+	deathBG->Draw();
+	glUniform1f(glGetUniformLocation(uiShader, "opacity"), 1.0f);
+
+	if (!deadPastLimit)
+	{
+		if (deadCounter < 1) {
+			gameOverText.SetString("Game Over\nScore: " + std::to_string((int)points));
+		}
+		glUseProgram(textShader);
+		glBindTexture(GL_TEXTURE_2D, font);
+		gameOverText.DrawText(textShader);
+	}
+}
+
+void DrawSplash()
+{
+	splashTimer += deltaTime;
+	glUseProgram(uiShader);
+
+	if (splashTimer > 4) {
+		opacity -= deltaTime * 2;
+		if (opacity < 0) {
+			opacity = 0;
+			inSplash = false;
+		}
+
+		titleBG->Draw();
+		glUniform1f(glGetUniformLocation(uiShader, "opacity"), opacity);
+	}
+
+	splash->Draw();
+	glUniform1f(glGetUniformLocation(uiShader, "opacity"), 1.0f);
+}
+
+void DeleteTitlePtrs()
+{
+	delete titleLogo;
+	delete titleBG;
+	delete titleCur;
+	delete splash;
+	delete deathBG;
 }

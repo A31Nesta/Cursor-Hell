@@ -1,6 +1,7 @@
 // Cursor Hell
 #include "curserSrc/CHEngine.hpp"
 #include "curserSrc/CHPlayerFuncs.hpp"
+
 #include "curserSrc/SpiralScene.hpp"
 #include "curserSrc/Patterns/GenericPatterns.hpp"
 #include "curserSrc/Types/Bullet.hpp"
@@ -18,6 +19,7 @@ int main()
 	//sp.SayTotalScore(&sounds, 420);
 
 	SetupPlayer();
+	InitTitle();
 
 	sensitivity = 0.1f;
 	SpiralScene spiralScene(&pv, &sounds, &sp);
@@ -29,36 +31,49 @@ int main()
 	scenes.push_back(&generic2);
 	scenes.push_back(&generic1);
 
+	// isInTitle = false;
+
 
 	while (!glfwWindowShouldClose(window))
 	{
 		CalcFPS();
 		ProcessInput();
 
-		DrawBackground();
-		UpdatePlayerRelated();
-		
-		for (size_t i = 0; i < scenes.size(); i++)
-		{
-			uint8_t status = scenes.at(i)->Draw(shader, deltaTime);
-			if (status == 1) {
-				if (i == 0 && scenes.at(scenes.size()-1)->patternTimer > scenes.at(scenes.size()-1)->totalTime) {
-					if (scenes.at(scenes.size()-1)->Draw(shader, deltaTime) == 2) { scenes.at(scenes.size()-1)->InitScene(); }
-				}
-				break;
-			}
-			else if (status == 3 && i == scenes.size() -1)
-			{
-				for (size_t j = 0; j < scenes.size()-1; j++) {
-					scenes.at(j)->InitScene();
-				}
-			}
+		if (inSplash) {
+			DrawSplash();
 		}
-		
-		
-		DrawPlayerRelated();
-		DrawInterface();
-		DrawText();
+		else if (isInTitle) 
+		{
+			DrawTitle(scenes);
+		}
+		else if (pv.gameOver)
+		{
+			DrawGameOver();
+		}
+		else
+		{
+			DrawBackground();
+			for (size_t i = 0; i < scenes.size(); i++)
+			{
+				uint8_t status = scenes.at(i)->Draw(shader, deltaTime);
+				if (status == 1) {
+					if (i == 0 && scenes.at(scenes.size()-1)->patternTimer > scenes.at(scenes.size()-1)->totalTime) {
+						if (scenes.at(scenes.size()-1)->Draw(shader, deltaTime) == 2) { scenes.at(scenes.size()-1)->InitScene(); }
+					}
+					break;
+				}
+				else if (status == 3 && i == scenes.size() -1)
+				{
+					for (size_t j = 0; j < scenes.size()-1; j++) {
+						scenes.at(j)->InitScene();
+					}
+				}
+			}
+			UpdatePlayerRelated();
+			DrawPlayerRelated();
+			DrawInterface();
+			DrawText();
+		}
 
 		EndUpdate();
 	}

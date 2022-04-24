@@ -14,9 +14,9 @@ void SpiralScene::InitScene()
 		bullets.push_back(t);
 	}
 
-	moosic.openFromFile("Assets/ShittyMusic/1.wav");
-	moosic.setVolume(volume);
-	startMusic = true;
+	// moosic.openFromFile("Assets/ShittyMusic/1.wav");
+	// moosic.setVolume(volume);
+	// startMusic = true;
 }
 
 uint8_t SpiralScene::Update(double dt)
@@ -27,16 +27,16 @@ uint8_t SpiralScene::Update(double dt)
 	// 1 = Draw
 	// 2 = Stop drawing
 
-	StartMusic();
+	// StartMusic();
 
     patternTimer += dt;
 	if (patternTimer > totalTime + timeAfterFinished) {
 		return 2;
     }
 
-	if (pv->lives < 0 && moosic.getStatus() == sf::SoundSource::Status::Playing) {
-		moosic.stop();
-	}
+	// if (pv->lives < 0 && moosic.getStatus() == sf::SoundSource::Status::Playing) {
+	// 	moosic.stop();
+	// }
 
 	if (numberOfBullets < numberOfMaxBoolets) {
 		genBulletTimer += dt * genBulletTimeMultiplier;
